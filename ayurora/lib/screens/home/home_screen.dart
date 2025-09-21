@@ -1,3 +1,4 @@
+import 'package:ayurora/components/my_bottom_navbar.dart';
 import 'package:ayurora/constants.dart';
 import 'package:ayurora/screens/home/components/body.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class HomeScreen extends StatelessWidget {
       return Scaffold(
         appBar: buildAppBar(),
         body: Body(),
+        bottomNavigationBar: MyBottomNavBar(),
       ); // Replace with actual home screen implementation
     
   }
@@ -24,3 +26,4 @@ class HomeScreen extends StatelessWidget {
       );
   }
 }
+

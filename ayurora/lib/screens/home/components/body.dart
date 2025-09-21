@@ -1,6 +1,6 @@
 import 'package:ayurora/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'featured_plants.dart';
 import 'header_with_searchbox.dart';
 import 'recomend_plants.dart';
 import 'title_with_more_btn.dart';
@@ -20,6 +20,9 @@ class Body extends StatelessWidget {
           TitleWithMoreBtn(title: "Recommended", press: () {}),
           // It will cover 40% of our total witdh
           RecomendsPlants(),
+          TitleWithMoreBtn(title: "Featured Plants", press: () {}),
+          FeaturedPlants(),
+          SizedBox(height: kDefaultPadding),
         ],
       ),
     );
