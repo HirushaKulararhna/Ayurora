@@ -2,6 +2,7 @@ import 'package:ayurora/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'header_with_searchbox.dart';
+import 'title_with_more_btn.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
@@ -14,9 +15,9 @@ class Body extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          HeaderWithSearchBox(size: size)
+          HeaderWithSearchBox(size: size),
+          TitleWithMoreBtn(title: "Recommended", press: () {},),
         ],
-      
       ),
     );
   }
