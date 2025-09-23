@@ -1,11 +1,10 @@
+import 'package:ayurora/screens/details/details_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
 
 class RecomendsPlants extends StatelessWidget {
-  const RecomendsPlants({
-    super.key,
-  });
+  const RecomendsPlants({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,28 +17,48 @@ class RecomendsPlants extends StatelessWidget {
             title: "Samantha",
             country: "Russia",
             price: 440,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DetailsScreen()),
+              );
+            },
           ),
           RecomendPlantCard(
             image: "assets/images/image_2.png",
             title: "Samantha",
             country: "Russia",
             price: 440,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DetailsScreen()),
+              );
+            },
           ),
           RecomendPlantCard(
             image: "assets/images/image_3.png",
             title: "Samantha",
             country: "Russia",
             price: 440,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DetailsScreen()),
+              );
+            },
           ),
           RecomendPlantCard(
             image: "assets/images/image_1.png",
             title: "Samantha",
             country: "Russia",
             price: 440,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DetailsScreen()),
+              );
+            },
           ),
         ],
       ),
@@ -49,8 +68,12 @@ class RecomendsPlants extends StatelessWidget {
 
 class RecomendPlantCard extends StatelessWidget {
   const RecomendPlantCard({
-    super.key, required this.image, required this.title, required this.country, required this.price, required this.press,
-    
+    super.key,
+    required this.image,
+    required this.title,
+    required this.country,
+    required this.price,
+    required this.press,
   });
 
   final String image, title, country;
@@ -77,9 +100,9 @@ class RecomendPlantCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10), 
+                  bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10),
-                  ),
+                ),
                 boxShadow: [
                   BoxShadow(
                     offset: Offset(0, 10),
@@ -109,11 +132,10 @@ class RecomendPlantCard extends StatelessWidget {
                   Spacer(),
                   Text(
                     "\$$price",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge
-                        ?.copyWith(color: kPrimaryColor),
-                  )
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelLarge?.copyWith(color: kPrimaryColor),
+                  ),
                 ],
               ),
             ),
