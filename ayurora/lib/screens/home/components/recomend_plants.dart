@@ -1,66 +1,34 @@
+import 'package:ayurora/models/plant.dart';
 import 'package:ayurora/screens/details/details_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../../../constants.dart';
 
 class RecomendsPlants extends StatelessWidget {
-  const RecomendsPlants({super.key});
+  const RecomendsPlants({
+    super.key,
+    required this.plants,
+  });
+
+  final List<Plant> plants;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: [
-          RecomendPlantCard(
-            image: "assets/images/image_1.png",
-            title: "Samantha",
-            country: "Russia",
-            price: 440,
+        children: plants.map((plant) {
+          return RecomendPlantCard(
+            plant: plant,
             press: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DetailsScreen()),
+                MaterialPageRoute(
+                  builder: (context) => DetailsScreen(plant: plant),
+                ),
               );
             },
-          ),
-          RecomendPlantCard(
-            image: "assets/images/image_2.png",
-            title: "Samantha",
-            country: "Russia",
-            price: 440,
-            press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DetailsScreen()),
-              );
-            },
-          ),
-          RecomendPlantCard(
-            image: "assets/images/image_3.png",
-            title: "Samantha",
-            country: "Russia",
-            price: 440,
-            press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DetailsScreen()),
-              );
-            },
-          ),
-          RecomendPlantCard(
-            image: "assets/images/image_1.png",
-            title: "Samantha",
-            country: "Russia",
-            price: 440,
-            press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DetailsScreen()),
-              );
-            },
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
@@ -69,15 +37,11 @@ class RecomendsPlants extends StatelessWidget {
 class RecomendPlantCard extends StatelessWidget {
   const RecomendPlantCard({
     super.key,
-    required this.image,
-    required this.title,
-    required this.country,
-    required this.price,
+    required this.plant,
     required this.press,
   });
 
-  final String image, title, country;
-  final int price;
+  final Plant plant;
   final VoidCallback press;
 
   @override
@@ -92,7 +56,57 @@ class RecomendPlantCard extends StatelessWidget {
       width: size.width * 0.4,
       child: Column(
         children: <Widget>[
-          Image.asset(image),
+          Stack(
+            children: [
+              Hero(
+                tag: 'plant_${plant.id}',
+                child: Image.asset(
+                  plant.imageUrl,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: plant.backgroundColor.withOpacity(0.2),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.local_florist,
+                        size: 60,
+                        color: plant.backgroundColor,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              if (plant.isFavorite)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                      size: 16,
+                    ),
+                  ),
+                ),
+            ],
+          ),
           GestureDetector(
             onTap: press,
             child: Container(
@@ -113,28 +127,24 @@ class RecomendPlantCard extends StatelessWidget {
               ),
               child: Row(
                 children: <Widget>[
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "$title\n".toUpperCase(),
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                        TextSpan(
-                          text: "$country".toUpperCase(),
-                          style: TextStyle(
-                            color: kPrimaryColor.withOpacity(0.5),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "${plant.name}\n".toUpperCase(),
+                            style: Theme.of(context).textTheme.labelLarge,
                           ),
-                        ),
-                      ],
+                          TextSpan(
+                            text: plant.sanskritName,
+                            style: TextStyle(
+                              color: kPrimaryColor.withOpacity(0.5),
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Spacer(),
-                  Text(
-                    "\$$price",
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelLarge?.copyWith(color: kPrimaryColor),
                   ),
                 ],
               ),
