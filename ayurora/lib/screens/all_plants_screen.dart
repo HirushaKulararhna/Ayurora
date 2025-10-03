@@ -96,9 +96,9 @@ class AllPlantsScreen extends StatelessWidget {
 
   double _getChildAspectRatio(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width >= 900) return 0.8; // Tablets
-    if (width >= 600) return 0.75; // Medium devices
-    return 0.7; // Small phones (more vertical space)
+    if (width >= 900) return 0.85; // Tablets
+    if (width >= 600) return 0.8; // Medium devices
+    return 0.75; // Small phones (slightly more vertical space without price)
   }
 
   double _getResponsivePadding(BuildContext context) {
@@ -228,7 +228,7 @@ class PlantGridCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 2),
+                    SizedBox(height: 4),
                     Text(
                       plant.category.toUpperCase(),
                       style: TextStyle(
@@ -240,46 +240,26 @@ class PlantGridCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            '₹${plant.price}',
-                            style: TextStyle(
-                              fontSize: _getResponsiveFontSize(context, 16),
-                              fontWeight: FontWeight.bold,
-                              color: kPrimaryColor,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 6 : 8,
+                        vertical: isSmallScreen ? 3 : 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: kPrimaryColor.withOpacity(0.1),
+                        borderRadius:
+                            BorderRadius.circular(isSmallScreen ? 8 : 12),
+                      ),
+                      child: Text(
+                        plant.difficultyLevel,
+                        style: TextStyle(
+                          fontSize: _getResponsiveFontSize(context, 10),
+                          color: kPrimaryColor,
+                          fontWeight: FontWeight.w600,
                         ),
-                        SizedBox(width: 4),
-                        Flexible(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isSmallScreen ? 6 : 8,
-                              vertical: isSmallScreen ? 3 : 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: kPrimaryColor.withOpacity(0.1),
-                              borderRadius:
-                                  BorderRadius.circular(isSmallScreen ? 8 : 12),
-                            ),
-                            child: Text(
-                              plant.difficultyLevel,
-                              style: TextStyle(
-                                fontSize: _getResponsiveFontSize(context, 10),
-                                color: kPrimaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
