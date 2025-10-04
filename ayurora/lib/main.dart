@@ -1,8 +1,15 @@
-import 'package:ayurora/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:ayurora/constants.dart';
+import 'package:ayurora/screens/splash/splash_screen.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter binding is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp();
+  
   runApp(const MyApp());
 }
 
@@ -21,7 +28,7 @@ class MyApp extends StatelessWidget {
         textTheme: Theme.of(context).textTheme.apply(bodyColor: kTextColor),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }
