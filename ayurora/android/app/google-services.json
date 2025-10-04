@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "454458402871",
+    "project_id": "ayurora-379f7",
+    "storage_bucket": "ayurora-379f7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454458402871:android:cedabd09ad04ff76d7b7b2",
+        "android_client_info": {
+          "package_name": "com.example.ayurora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpDlDooVUxRCY5n0gUNRH0-SoOPFTo6cw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
