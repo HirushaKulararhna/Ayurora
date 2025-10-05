@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
-import '../constants.dart';
+import 'package:ayurora/constants.dart';
+import 'package:ayurora/screens/profile/profile_screen.dart';
 
 class MyBottomNavBar extends StatelessWidget {
   const MyBottomNavBar({
@@ -24,23 +23,40 @@ class MyBottomNavBar extends StatelessWidget {
             offset: Offset(0, -10),
             blurRadius: 35,
             color: kPrimaryColor.withOpacity(0.38),
-          )
-        ]
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget> [
+        children: <Widget>[
           IconButton(
-            icon: SvgPicture.asset("assets/icons/flower.svg"),
-            onPressed: () {},
+            icon: Icon(Icons.local_florist, color: kPrimaryColor, size: 28),
+            onPressed: () {
+              // Already on home screen
+            },
           ),
           IconButton(
-            icon: SvgPicture.asset("assets/icons/heart-icon.svg"),
-            onPressed: () {},
+            icon: Icon(Icons.favorite_border, color: kTextColor, size: 28),
+            onPressed: () {
+              // Navigate to favorites
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Favorites coming soon!'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+            },
           ),
           IconButton(
-            icon: SvgPicture.asset("assets/icons/user-icon.svg"),
-            onPressed: () {},
+            icon: Icon(Icons.person_outline, color: kTextColor, size: 28),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),

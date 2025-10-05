@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ayurora/constants.dart';
+import 'package:ayurora/screens/profile/profile_screen.dart';
 
 class HeaderWithSearchBox extends StatefulWidget {
   const HeaderWithSearchBox({
@@ -26,6 +28,8 @@ class _HeaderWithSearchBoxState extends State<HeaderWithSearchBox> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Container(
       margin: EdgeInsets.only(bottom: kDefaultPadding * 2.5),
       height: widget.size.height * 0.2,
@@ -47,17 +51,76 @@ class _HeaderWithSearchBoxState extends State<HeaderWithSearchBox> {
             ),
             child: Row(
               children: <Widget>[
-                Text(
-                  'Hi Ayurora User!',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hi ${user?.displayName ?? 'User'}!',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
+                      SizedBox(height: 4),
+                      Text(
+                        user?.email ?? '',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 12,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-                Spacer(),
-                Image.asset("assets/images/logo.png", errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.local_florist, color: Colors.white, size: 32);
-                }),
+                SizedBox(width: 8),
+                // Profile Button
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfileScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: user?.photoURL != null
+                          ? Image.network(
+                              user!.photoURL!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.person,
+                                  color: kPrimaryColor,
+                                  size: 30,
+                                );
+                              },
+                            )
+                          : Icon(
+                              Icons.person,
+                              color: kPrimaryColor,
+                              size: 30,
+                            ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
