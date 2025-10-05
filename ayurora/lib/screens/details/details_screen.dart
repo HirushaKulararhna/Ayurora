@@ -23,19 +23,9 @@ class _DetailsScreenState extends State<DetailsScreen>
   late PageController _pageController;
   int _currentImageIndex = 0;
 
-  late List<String> plantImages;
-
   @override
   void initState() {
     super.initState();
-    
-    plantImages = [
-      widget.plant.imageUrl,
-      widget.plant.imageUrl,
-      widget.plant.imageUrl,
-      widget.plant.imageUrl,
-      widget.plant.imageUrl,
-    ];
     
     _pageController = PageController();
     
@@ -71,7 +61,7 @@ class _DetailsScreenState extends State<DetailsScreen>
   }
 
   void _nextImage() {
-    if (_currentImageIndex < plantImages.length - 1) {
+    if (_currentImageIndex < widget.plant.galleryImages.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -120,6 +110,9 @@ class _DetailsScreenState extends State<DetailsScreen>
     if (height < 700) return 250;
     return 300;
   }
+
+  // Check if plant has multiple images
+  bool get hasMultipleImages => widget.plant.galleryImages.length > 1;
 
   @override
   Widget build(BuildContext context) {
@@ -246,14 +239,20 @@ class _DetailsScreenState extends State<DetailsScreen>
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
+                      // PageView for image gallery (works with single or multiple images)
                       PageView.builder(
                         controller: _pageController,
+                        physics: hasMultipleImages 
+                            ? const PageScrollPhysics() 
+                            : const NeverScrollableScrollPhysics(),
                         onPageChanged: (index) {
-                          setState(() {
-                            _currentImageIndex = index;
-                          });
+                          if (hasMultipleImages) {
+                            setState(() {
+                              _currentImageIndex = index;
+                            });
+                          }
                         },
-                        itemCount: plantImages.length,
+                        itemCount: widget.plant.galleryImages.length,
                         itemBuilder: (context, index) {
                           return Container(
                             margin: EdgeInsets.symmetric(
@@ -276,7 +275,7 @@ class _DetailsScreenState extends State<DetailsScreen>
                                 isSmallScreen ? 16 : 20,
                               ),
                               child: Image.asset(
-                                plantImages[index],
+                                widget.plant.galleryImages[index],
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
@@ -294,7 +293,8 @@ class _DetailsScreenState extends State<DetailsScreen>
                         },
                       ),
                       
-                      if (_currentImageIndex > 0)
+                      // Previous button (only show if multiple images and not on first)
+                      if (hasMultipleImages && _currentImageIndex > 0)
                         Positioned(
                           left: 0,
                           child: Container(
@@ -317,7 +317,8 @@ class _DetailsScreenState extends State<DetailsScreen>
                           ),
                         ),
                       
-                      if (_currentImageIndex < plantImages.length - 1)
+                      // Next button (only show if multiple images and not on last)
+                      if (hasMultipleImages && _currentImageIndex < widget.plant.galleryImages.length - 1)
                         Positioned(
                           right: 0,
                           child: Container(
@@ -340,61 +341,65 @@ class _DetailsScreenState extends State<DetailsScreen>
                           ),
                         ),
                       
-                      Positioned(
-                        bottom: isSmallScreen ? 12 : 20,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            plantImages.length,
-                            (index) => Container(
-                              margin: EdgeInsets.symmetric(
-                                horizontal: isSmallScreen ? 3 : 4,
-                              ),
-                              width: _currentImageIndex == index 
-                                ? (isSmallScreen ? 20 : 24) 
-                                : (isSmallScreen ? 6 : 8),
-                              height: isSmallScreen ? 6 : 8,
-                              decoration: BoxDecoration(
-                                color: _currentImageIndex == index
-                                    ? kPrimaryColor
-                                    : Colors.white.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(4),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 4,
-                                  ),
-                                ],
+                      // Page indicators (only show if multiple images)
+                      if (hasMultipleImages)
+                        Positioned(
+                          bottom: isSmallScreen ? 12 : 20,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              widget.plant.galleryImages.length,
+                              (index) => Container(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: isSmallScreen ? 3 : 4,
+                                ),
+                                width: _currentImageIndex == index 
+                                  ? (isSmallScreen ? 20 : 24) 
+                                  : (isSmallScreen ? 6 : 8),
+                                height: isSmallScreen ? 6 : 8,
+                                decoration: BoxDecoration(
+                                  color: _currentImageIndex == index
+                                      ? kPrimaryColor
+                                      : Colors.white.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(4),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
                       
-                      Positioned(
-                        top: isSmallScreen ? 12 : 20,
-                        right: isSmallScreen ? 12 : 20,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isSmallScreen ? 8 : 12,
-                            vertical: isSmallScreen ? 4 : 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(
-                              isSmallScreen ? 16 : 20,
+                      // Image counter (only show if multiple images)
+                      if (hasMultipleImages)
+                        Positioned(
+                          top: isSmallScreen ? 12 : 20,
+                          right: isSmallScreen ? 12 : 20,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isSmallScreen ? 8 : 12,
+                              vertical: isSmallScreen ? 4 : 6,
                             ),
-                          ),
-                          child: Text(
-                            '${_currentImageIndex + 1}/${plantImages.length}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: isSmallScreen ? 10 : 12,
-                              fontWeight: FontWeight.w600,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: BorderRadius.circular(
+                                isSmallScreen ? 16 : 20,
+                              ),
+                            ),
+                            child: Text(
+                              '${_currentImageIndex + 1}/${widget.plant.galleryImages.length}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isSmallScreen ? 10 : 12,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
