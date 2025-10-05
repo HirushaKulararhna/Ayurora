@@ -36,6 +36,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_svg: ^1.1.6   #it helps us to use svg ----new added
 
+  # Firebase packages
+   #Updated Firebase packages
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.4.1
+  cloud_firestore: ^5.5.1
+  google_sign_in: ^6.2.1
+
+
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
