@@ -7,7 +7,8 @@ class Plant {
   final String sanskritName;
   final String scientificName;
   final String category;
-  final String imageUrl;
+  final String imageUrl; // Main thumbnail image
+  final List<String> galleryImages; // Multiple images for gallery
   final String difficultyLevel;
   final String growthTime;
   final String description;
@@ -29,6 +30,7 @@ class Plant {
     required this.scientificName,
     required this.category,
     required this.imageUrl,
+    required this.galleryImages,
     required this.difficultyLevel,
     required this.growthTime,
     required this.description,
@@ -44,7 +46,6 @@ class Plant {
     this.isFavorite = false,
   });
 
-  // Method to toggle favorite
   void toggleFavorite() {
     isFavorite = !isFavorite;
   }
