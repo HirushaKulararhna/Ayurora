@@ -32,35 +32,28 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.elasticOut),
+        curve: const Interval(0.0, 0.8, curve: Curves.elasticOut),
       ),
     );
 
     _controller.forward();
-
-    // Check authentication status and navigate
     _checkAuthAndNavigate();
   }
 
   Future<void> _checkAuthAndNavigate() async {
-    // Wait for splash animation
     await Future.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;
 
-    // Check if user is already logged in
     final user = FirebaseAuth.instance.currentUser;
-
     if (user != null) {
-      // User is logged in, go to home
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => HomeScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else {
-      // User not logged in, go to welcome screen
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       );
@@ -85,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen>
             end: Alignment.bottomRight,
             colors: [
               kPrimaryColor,
-              kPrimaryColor.withOpacity(0.8),
+              kPrimaryColor.withOpacity(0.85),
               kPrimaryColor.withOpacity(0.6),
             ],
           ),
@@ -93,35 +86,38 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Animated Logo
             FadeTransition(
               opacity: _fadeAnimation,
               child: ScaleTransition(
                 scale: _scaleAnimation,
                 child: Container(
-                  width: 150,
-                  height: 150,
+                  width: 140,
+                  height: 140,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
+                        color: Colors.white.withOpacity(0.4),
+                        blurRadius: 25,
+                        spreadRadius: 5,
+                      ),
+                      BoxShadow(
                         color: Colors.black.withOpacity(0.2),
-                        blurRadius: 30,
-                        offset: const Offset(0, 10),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.local_florist,
-                    size: 80,
-                    color: kPrimaryColor,
+                  padding: const EdgeInsets.all(20),
+                  child: Image.asset(
+                    'assets/playstore.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 30),
-            // Animated App Name
             FadeTransition(
               opacity: _fadeAnimation,
               child: Column(
@@ -148,7 +144,6 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
             const SizedBox(height: 50),
-            // Loading Indicator
             FadeTransition(
               opacity: _fadeAnimation,
               child: CircularProgressIndicator(

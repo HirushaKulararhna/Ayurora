@@ -5,12 +5,12 @@ import 'package:ayurora/models/plant.dart';
 
 class DetailsScreen extends StatefulWidget {
   final Plant plant;
-  final VoidCallback? onFavoriteToggle; // Add this callback
+  final VoidCallback? onFavoriteToggle;
 
   const DetailsScreen({
     super.key,
     required this.plant,
-    this.onFavoriteToggle, // Add this parameter
+    this.onFavoriteToggle,
   });
 
   @override
@@ -62,24 +62,6 @@ class _DetailsScreenState extends State<DetailsScreen>
     super.dispose();
   }
 
-  void _nextImage() {
-    if (_currentImageIndex < widget.plant.galleryImages.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _previousImage() {
-    if (_currentImageIndex > 0) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
   double _getResponsivePadding(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     if (width >= 900) return 24;
@@ -94,26 +76,6 @@ class _DetailsScreenState extends State<DetailsScreen>
     if (width < 400) return baseSize * 0.9;
     return baseSize;
   }
-
-  double _getExpandedHeight(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-    if (width >= 900) return 500;
-    if (width >= 600) return 450;
-    if (height < 700) return 350;
-    return 450;
-  }
-
-  double _getImageHeight(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-    if (width >= 900) return 400;
-    if (width >= 600) return 350;
-    if (height < 700) return 250;
-    return 300;
-  }
-
-  bool get hasMultipleImages => widget.plant.galleryImages.length > 1;
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +104,7 @@ class _DetailsScreenState extends State<DetailsScreen>
     final isSmallScreen = screenWidth < 360;
     
     return SliverAppBar(
-      expandedHeight: _getExpandedHeight(context),
+      expandedHeight: 400,
       pinned: true,
       elevation: 0,
       backgroundColor: kBackgroundColor,
@@ -191,7 +153,6 @@ class _DetailsScreenState extends State<DetailsScreen>
                 widget.plant.toggleFavorite();
               });
               
-              // Notify parent screens to refresh
               if (widget.onFavoriteToggle != null) {
                 widget.onFavoriteToggle!();
               }
@@ -232,176 +193,53 @@ class _DetailsScreenState extends State<DetailsScreen>
                 ),
               ),
             ),
-            
             Hero(
               tag: 'plant_${widget.plant.id}',
               child: Center(
                 child: Container(
                   width: double.infinity,
-                  height: _getImageHeight(context),
-                  margin: EdgeInsets.symmetric(
-                    horizontal: isSmallScreen ? 12 : 20,
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      PageView.builder(
-                        controller: _pageController,
-                        physics: hasMultipleImages 
-                            ? const PageScrollPhysics() 
-                            : const NeverScrollableScrollPhysics(),
-                        onPageChanged: (index) {
-                          if (hasMultipleImages) {
-                            setState(() {
-                              _currentImageIndex = index;
-                            });
-                          }
-                        },
-                        itemCount: widget.plant.galleryImages.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(
-                              horizontal: isSmallScreen ? 5 : 10,
+                  height: 300,
+                  margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 12 : 20),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentImageIndex = index;
+                      });
+                    },
+                    itemCount: widget.plant.galleryImages.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 5 : 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: kPrimaryColor.withOpacity(0.3),
+                              blurRadius: 30,
+                              offset: const Offset(0, 10),
                             ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                isSmallScreen ? 16 : 20,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: kPrimaryColor.withOpacity(0.3),
-                                  blurRadius: 30,
-                                  offset: const Offset(0, 10),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
+                          child: Image.asset(
+                            widget.plant.galleryImages[index],
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: kPrimaryColor.withOpacity(0.2),
+                                child: Icon(
+                                  Icons.local_florist,
+                                  size: isSmallScreen ? 60 : 80,
+                                  color: kPrimaryColor,
                                 ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                isSmallScreen ? 16 : 20,
-                              ),
-                              child: Image.asset(
-                                widget.plant.galleryImages[index],
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: kPrimaryColor.withOpacity(0.2),
-                                    child: Icon(
-                                      Icons.local_florist,
-                                      size: isSmallScreen ? 60 : 80,
-                                      color: kPrimaryColor,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      
-                      if (hasMultipleImages && _currentImageIndex > 0)
-                        Positioned(
-                          left: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: IconButton(
-                              iconSize: isSmallScreen ? 18 : 24,
-                              icon: Icon(Icons.arrow_back_ios_new, color: kPrimaryColor),
-                              onPressed: _previousImage,
-                            ),
+                              );
+                            },
                           ),
                         ),
-                      
-                      if (hasMultipleImages && _currentImageIndex < widget.plant.galleryImages.length - 1)
-                        Positioned(
-                          right: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: IconButton(
-                              iconSize: isSmallScreen ? 18 : 24,
-                              icon: Icon(Icons.arrow_forward_ios, color: kPrimaryColor),
-                              onPressed: _nextImage,
-                            ),
-                          ),
-                        ),
-                      
-                      if (hasMultipleImages)
-                        Positioned(
-                          bottom: isSmallScreen ? 12 : 20,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              widget.plant.galleryImages.length,
-                              (index) => Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: isSmallScreen ? 3 : 4,
-                                ),
-                                width: _currentImageIndex == index 
-                                  ? (isSmallScreen ? 20 : 24) 
-                                  : (isSmallScreen ? 6 : 8),
-                                height: isSmallScreen ? 6 : 8,
-                                decoration: BoxDecoration(
-                                  color: _currentImageIndex == index
-                                      ? kPrimaryColor
-                                      : Colors.white.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(4),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 4,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      
-                      if (hasMultipleImages)
-                        Positioned(
-                          top: isSmallScreen ? 12 : 20,
-                          right: isSmallScreen ? 12 : 20,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isSmallScreen ? 8 : 12,
-                              vertical: isSmallScreen ? 4 : 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(
-                                isSmallScreen ? 16 : 20,
-                              ),
-                            ),
-                            child: Text(
-                              '${_currentImageIndex + 1}/${widget.plant.galleryImages.length}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: isSmallScreen ? 10 : 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -430,13 +268,23 @@ class _DetailsScreenState extends State<DetailsScreen>
           children: [
             _buildPlantHeader(context),
             SizedBox(height: padding * 1.5),
+            _buildPlantNames(context),
+            SizedBox(height: padding * 1.5),
             _buildPlantStats(context),
             SizedBox(height: padding * 1.75),
             _buildDescription(context),
             SizedBox(height: padding * 1.75),
+            _buildAyurvedicProperties(context),
+            SizedBox(height: padding * 1.75),
             _buildCareInstructions(context),
             SizedBox(height: padding * 1.75),
             _buildPlantBenefits(context),
+            SizedBox(height: padding * 1.75),
+            _buildTherapeuticUses(context),
+            SizedBox(height: padding * 1.75),
+            _buildFormulations(context),
+            SizedBox(height: padding * 1.75),
+            _buildDosageInfo(context),
             SizedBox(height: padding * 1.75),
             _buildPlantFacts(context),
             const SizedBox(height: 100),
@@ -544,10 +392,65 @@ class _DetailsScreenState extends State<DetailsScreen>
     );
   }
 
+  Widget _buildPlantNames(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(_getResponsivePadding(context)),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            widget.plant.backgroundColor.withOpacity(0.1),
+            widget.plant.backgroundColor.withOpacity(0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: widget.plant.backgroundColor.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildNameRow('සිංහල', widget.plant.sinhalaName),
+          Divider(height: 16, color: Colors.grey.shade300),
+          _buildNameRow('संस्कृत', widget.plant.sanskritName),
+          Divider(height: 16, color: Colors.grey.shade300),
+          _buildNameRow('English', widget.plant.englishName),
+          Divider(height: 16, color: Colors.grey.shade300),
+          _buildNameRow('Family', widget.plant.family),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNameRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: _getResponsiveFontSize(context, 14),
+              fontWeight: FontWeight.w600,
+              color: kPrimaryColor,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: _getResponsiveFontSize(context, 14),
+              color: kTextColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPlantStats(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 360;
-    final isVerySmallScreen = screenWidth < 340;
     final padding = _getResponsivePadding(context);
     
     return Container(
@@ -563,35 +466,15 @@ class _DetailsScreenState extends State<DetailsScreen>
           ),
         ],
       ),
-      child: isVerySmallScreen
-          ? Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatItem(context, Icons.wb_sunny_outlined, 'Light', widget.plant.lightLevel),
-                    _buildStatItem(context, Icons.opacity, 'Water', widget.plant.waterLevel),
-                  ],
-                ),
-                SizedBox(height: padding),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStatItem(context, Icons.thermostat, 'Temp', widget.plant.temperature),
-                    _buildStatItem(context, Icons.straighten, 'Growth', widget.plant.growthRate),
-                  ],
-                ),
-              ],
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStatItem(context, Icons.wb_sunny_outlined, 'Light', widget.plant.lightLevel),
-                _buildStatItem(context, Icons.opacity, 'Water', widget.plant.waterLevel),
-                _buildStatItem(context, Icons.thermostat, 'Temp', widget.plant.temperature),
-                _buildStatItem(context, Icons.straighten, 'Growth', widget.plant.growthRate),
-              ],
-            ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildStatItem(context, Icons.wb_sunny_outlined, 'Light', widget.plant.lightLevel),
+          _buildStatItem(context, Icons.opacity, 'Water', widget.plant.waterLevel),
+          _buildStatItem(context, Icons.thermostat, 'Temp', widget.plant.temperature),
+          _buildStatItem(context, Icons.straighten, 'Growth', widget.plant.growthRate),
+        ],
+      ),
     );
   }
 
@@ -654,6 +537,83 @@ class _DetailsScreenState extends State<DetailsScreen>
     );
   }
 
+  Widget _buildAyurvedicProperties(BuildContext context) {
+    final props = widget.plant.ayurvedicProperties;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Ayurvedic Properties',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        _buildPropertyCard('Rasa (Taste)', props.rasa.join(', '), Icons.restaurant),
+        _buildPropertyCard('Guna (Quality)', props.guna.join(', '), Icons.science),
+        _buildPropertyCard('Virya (Potency)', props.virya, Icons.local_fire_department),
+        _buildPropertyCard('Vipaka (Post-digestion)', props.vipaka, Icons.health_and_safety),
+        _buildPropertyCard('Effect on Tridosha', props.effectOnTridosha, Icons.balance),
+        SizedBox(height: 8),
+        _buildPropertyCard('Karma (Actions)', props.karma.join(', '), Icons.autorenew),
+      ],
+    );
+  }
+
+  Widget _buildPropertyCard(String title, String value, IconData icon) {
+    final padding = _getResponsivePadding(context);
+    
+    return Container(
+      margin: EdgeInsets.only(bottom: padding * 0.75),
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: kPrimaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: kPrimaryColor, size: 20),
+          ),
+          SizedBox(width: padding),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 14),
+                    fontWeight: FontWeight.w600,
+                    color: kPrimaryColor,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 14),
+                    color: kTextColor,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCareInstructions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -675,8 +635,6 @@ class _DetailsScreenState extends State<DetailsScreen>
   }
 
   Widget _buildCareItem(BuildContext context, CareInstruction instruction) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
     final padding = _getResponsivePadding(context);
     
     return Container(
@@ -684,29 +642,22 @@ class _DetailsScreenState extends State<DetailsScreen>
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: instruction.color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(isSmallScreen ? 6 : 8),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               instruction.icon,
               color: instruction.color,
-              size: isSmallScreen ? 18 : 20,
+              size: 20,
             ),
           ),
           SizedBox(width: padding),
@@ -722,7 +673,7 @@ class _DetailsScreenState extends State<DetailsScreen>
                     color: kTextColor,
                   ),
                 ),
-                SizedBox(height: isSmallScreen ? 2 : 4),
+                SizedBox(height: 4),
                 Text(
                   instruction.description,
                   style: TextStyle(
@@ -784,9 +735,138 @@ class _DetailsScreenState extends State<DetailsScreen>
     );
   }
 
+  Widget _buildTherapeuticUses(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Therapeutic Uses',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        ...widget.plant.therapeuticUses.map((use) => Padding(
+          padding: EdgeInsets.only(bottom: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 6),
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: kPrimaryColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  use,
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 14),
+                    color: Colors.grey.shade700,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )).toList(),
+      ],
+    );
+  }
+
+  Widget _buildFormulations(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Important Formulations',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: widget.plant.importantFormulations.map((formulation) => Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.orange.withOpacity(0.3)),
+            ),
+            child: Text(
+              formulation,
+              style: TextStyle(
+                fontSize: _getResponsiveFontSize(context, 13),
+                color: Colors.orange.shade700,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDosageInfo(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(_getResponsivePadding(context)),
+      decoration: BoxDecoration(
+        color: Colors.amber.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.amber.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.medical_services, color: Colors.amber.shade700, size: 24),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Dosage',
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 16),
+                    fontWeight: FontWeight.w600,
+                    color: Colors.amber.shade900,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  widget.plant.dose,
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 14),
+                    color: Colors.amber.shade800,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Consult an Ayurvedic practitioner before use',
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 12),
+                    fontStyle: FontStyle.italic,
+                    color: Colors.red.shade700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPlantFacts(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
     final padding = _getResponsivePadding(context);
     
     return Column(
@@ -807,29 +887,22 @@ class _DetailsScreenState extends State<DetailsScreen>
                   padding: EdgeInsets.all(padding),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey.shade200),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+                        padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: kPrimaryColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(isSmallScreen ? 6 : 8),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
                           Icons.lightbulb_outline,
                           color: kPrimaryColor,
-                          size: isSmallScreen ? 18 : 20,
+                          size: 20,
                         ),
                       ),
                       SizedBox(width: padding),
@@ -852,9 +925,6 @@ class _DetailsScreenState extends State<DetailsScreen>
   }
 
   Widget _buildFloatingActionButton(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
-    
     return FloatingActionButton.extended(
       onPressed: () {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -878,10 +948,7 @@ class _DetailsScreenState extends State<DetailsScreen>
           fontWeight: FontWeight.w600,
         ),
       ),
-      icon: Icon(
-        Icons.add,
-        size: isSmallScreen ? 20 : 24,
-      ),
+      icon: Icon(Icons.add, size: 24),
     );
   }
 }
