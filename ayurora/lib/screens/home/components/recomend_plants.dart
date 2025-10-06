@@ -7,9 +7,11 @@ class RecomendsPlants extends StatelessWidget {
   const RecomendsPlants({
     super.key,
     required this.plants,
+    this.onRefresh,
   });
 
   final List<Plant> plants;
+  final VoidCallback? onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,16 @@ class RecomendsPlants extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailsScreen(plant: plant),
+                  builder: (context) => DetailsScreen(
+                    plant: plant,
+                    onFavoriteToggle: onRefresh,
+                  ),
                 ),
-              );
+              ).then((_) {
+                if (onRefresh != null) {
+                  onRefresh!();
+                }
+              });
             },
           );
         }).toList(),

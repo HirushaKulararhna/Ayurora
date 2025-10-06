@@ -5,10 +5,12 @@ import 'package:ayurora/models/plant.dart';
 
 class DetailsScreen extends StatefulWidget {
   final Plant plant;
+  final VoidCallback? onFavoriteToggle; // Add this callback
 
   const DetailsScreen({
     super.key,
     required this.plant,
+    this.onFavoriteToggle, // Add this parameter
   });
 
   @override
@@ -111,7 +113,6 @@ class _DetailsScreenState extends State<DetailsScreen>
     return 300;
   }
 
-  // Check if plant has multiple images
   bool get hasMultipleImages => widget.plant.galleryImages.length > 1;
 
   @override
@@ -190,6 +191,11 @@ class _DetailsScreenState extends State<DetailsScreen>
                 widget.plant.toggleFavorite();
               });
               
+              // Notify parent screens to refresh
+              if (widget.onFavoriteToggle != null) {
+                widget.onFavoriteToggle!();
+              }
+              
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -239,7 +245,6 @@ class _DetailsScreenState extends State<DetailsScreen>
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      // PageView for image gallery (works with single or multiple images)
                       PageView.builder(
                         controller: _pageController,
                         physics: hasMultipleImages 
@@ -293,7 +298,6 @@ class _DetailsScreenState extends State<DetailsScreen>
                         },
                       ),
                       
-                      // Previous button (only show if multiple images and not on first)
                       if (hasMultipleImages && _currentImageIndex > 0)
                         Positioned(
                           left: 0,
@@ -317,7 +321,6 @@ class _DetailsScreenState extends State<DetailsScreen>
                           ),
                         ),
                       
-                      // Next button (only show if multiple images and not on last)
                       if (hasMultipleImages && _currentImageIndex < widget.plant.galleryImages.length - 1)
                         Positioned(
                           right: 0,
@@ -341,7 +344,6 @@ class _DetailsScreenState extends State<DetailsScreen>
                           ),
                         ),
                       
-                      // Page indicators (only show if multiple images)
                       if (hasMultipleImages)
                         Positioned(
                           bottom: isSmallScreen ? 12 : 20,
@@ -374,7 +376,6 @@ class _DetailsScreenState extends State<DetailsScreen>
                           ),
                         ),
                       
-                      // Image counter (only show if multiple images)
                       if (hasMultipleImages)
                         Positioned(
                           top: isSmallScreen ? 12 : 20,

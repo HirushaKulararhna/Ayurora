@@ -3,13 +3,24 @@ import 'package:ayurora/screens/details/details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ayurora/constants.dart';
 
-class AllPlantsScreen extends StatelessWidget {
+class AllPlantsScreen extends StatefulWidget {
   final List<Plant> plants;
 
   const AllPlantsScreen({
     super.key,
     required this.plants,
   });
+
+  @override
+  State<AllPlantsScreen> createState() => _AllPlantsScreenState();
+}
+
+class _AllPlantsScreenState extends State<AllPlantsScreen> {
+  void _refreshUI() {
+    setState(() {
+      // Trigger rebuild
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +42,7 @@ class AllPlantsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: plants.isEmpty
+      body: widget.plants.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -63,18 +74,20 @@ class AllPlantsScreen extends StatelessWidget {
                     mainAxisSpacing: _getResponsivePadding(context),
                     childAspectRatio: _getChildAspectRatio(context),
                   ),
-                  itemCount: plants.length,
+                  itemCount: widget.plants.length,
                   itemBuilder: (context, index) {
                     return PlantGridCard(
-                      plant: plants[index],
+                      plant: widget.plants[index],
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                DetailsScreen(plant: plants[index]),
+                            builder: (context) => DetailsScreen(
+                              plant: widget.plants[index],
+                              onFavoriteToggle: _refreshUI,
+                            ),
                           ),
-                        );
+                        ).then((_) => _refreshUI());
                       },
                     );
                   },
@@ -84,21 +97,20 @@ class AllPlantsScreen extends StatelessWidget {
     );
   }
 
-  // Responsive helper methods
   int _getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width >= 1200) return 4; // Desktop/Large tablets
-    if (width >= 900) return 3; // Tablets landscape
-    if (width >= 600) return 3; // Tablets portrait
-    if (width >= 400) return 2; // Large phones
-    return 2; // Small phones
+    if (width >= 1200) return 4;
+    if (width >= 900) return 3;
+    if (width >= 600) return 3;
+    if (width >= 400) return 2;
+    return 2;
   }
 
   double _getChildAspectRatio(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width >= 900) return 0.85; // Tablets
-    if (width >= 600) return 0.8; // Medium devices
-    return 0.75; // Small phones (slightly more vertical space without price)
+    if (width >= 900) return 0.85;
+    if (width >= 600) return 0.8;
+    return 0.75;
   }
 
   double _getResponsivePadding(BuildContext context) {
@@ -110,7 +122,7 @@ class AllPlantsScreen extends StatelessWidget {
 
   double _getResponsiveFontSize(BuildContext context, double baseSize) {
     final width = MediaQuery.of(context).size.width;
-    if (width < 360) return baseSize * 0.9; // Very small phones
+    if (width < 360) return baseSize * 0.9;
     return baseSize;
   }
 
@@ -247,8 +259,7 @@ class PlantGridCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: kPrimaryColor.withOpacity(0.1),
-                        borderRadius:
-                            BorderRadius.circular(isSmallScreen ? 8 : 12),
+                        borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
                       ),
                       child: Text(
                         plant.difficultyLevel,
@@ -281,8 +292,8 @@ class PlantGridCard extends StatelessWidget {
 
   double _getResponsiveFontSize(BuildContext context, double baseSize) {
     final width = MediaQuery.of(context).size.width;
-    if (width < 360) return baseSize * 0.85; // Small phones
-    if (width < 400) return baseSize * 0.9; // Medium-small phones
+    if (width < 360) return baseSize * 0.85;
+    if (width < 400) return baseSize * 0.9;
     return baseSize;
   }
 }
