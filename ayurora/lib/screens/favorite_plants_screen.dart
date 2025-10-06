@@ -3,13 +3,24 @@ import 'package:ayurora/screens/details/details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ayurora/constants.dart';
 
-class FavoritePlantsScreen extends StatelessWidget {
+class FavoritePlantsScreen extends StatefulWidget {
   final List<Plant> plants;
 
   const FavoritePlantsScreen({
     super.key,
     required this.plants,
   });
+
+  @override
+  State<FavoritePlantsScreen> createState() => _FavoritePlantsScreenState();
+}
+
+class _FavoritePlantsScreenState extends State<FavoritePlantsScreen> {
+  void _refreshUI() {
+    setState(() {
+      // Trigger rebuild
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +42,7 @@ class FavoritePlantsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: plants.isEmpty
+      body: widget.plants.isEmpty
           ? Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -74,17 +85,20 @@ class FavoritePlantsScreen extends StatelessWidget {
             )
           : ListView.builder(
               padding: EdgeInsets.all(_getResponsivePadding(context)),
-              itemCount: plants.length,
+              itemCount: widget.plants.length,
               itemBuilder: (context, index) {
                 return FavoritePlantListCard(
-                  plant: plants[index],
+                  plant: widget.plants[index],
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailsScreen(plant: plants[index]),
+                        builder: (context) => DetailsScreen(
+                          plant: widget.plants[index],
+                          onFavoriteToggle: _refreshUI,
+                        ),
                       ),
-                    );
+                    ).then((_) => _refreshUI());
                   },
                 );
               },
@@ -127,7 +141,6 @@ class FavoritePlantListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 360;
-    final isMediumScreen = screenWidth >= 360 && screenWidth < 600;
     
     return GestureDetector(
       onTap: onTap,

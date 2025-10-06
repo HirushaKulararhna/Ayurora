@@ -1,6 +1,9 @@
+import 'package:ayurora/screens/plant_care_tasks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ayurora/constants.dart';
 import 'package:ayurora/screens/profile/profile_screen.dart';
+import 'package:ayurora/screens/favorite_plants_screen.dart';
+import 'package:ayurora/data/plant_data.dart';
 
 class MyBottomNavBar extends StatelessWidget {
   const MyBottomNavBar({
@@ -38,11 +41,14 @@ class MyBottomNavBar extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.favorite_border, color: kTextColor, size: 28),
             onPressed: () {
-              // Navigate to favorites
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Favorites coming soon!'),
-                  duration: Duration(seconds: 1),
+              final favoritePlants = PlantData.getAllPlants()
+                  .where((plant) => plant.isFavorite)
+                  .toList();
+              
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlantCareTasksScreen(),
                 ),
               );
             },

@@ -35,6 +35,12 @@ class _BodyState extends State<Body> {
     });
   }
 
+  void _refreshUI() {
+    setState(() {
+      // This will trigger a rebuild to reflect favorite changes
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -103,7 +109,10 @@ class _BodyState extends State<Body> {
           ),
         ),
         SizedBox(height: 16),
-        RecomendsPlants(plants: searchResults),
+        RecomendsPlants(
+          plants: searchResults,
+          onRefresh: _refreshUI,
+        ),
         SizedBox(height: kDefaultPadding),
       ],
     );
@@ -122,10 +131,13 @@ class _BodyState extends State<Body> {
               MaterialPageRoute(
                 builder: (context) => AllPlantsScreen(plants: allPlants),
               ),
-            );
+            ).then((_) => _refreshUI());
           }
         ),
-        RecomendsPlants(plants: allPlants),
+        RecomendsPlants(
+          plants: allPlants,
+          onRefresh: _refreshUI,
+        ),
         TitleWithMoreBtn(
           title: "Favorite Plants", 
           press: () {
@@ -134,10 +146,13 @@ class _BodyState extends State<Body> {
               MaterialPageRoute(
                 builder: (context) => FavoritePlantsScreen(plants: favoritePlants),
               ),
-            );
+            ).then((_) => _refreshUI());
           }
         ),
-        FavoritePlants(plants: favoritePlants),
+        FavoritePlants(
+          plants: favoritePlants,
+          onRefresh: _refreshUI,
+        ),
         SizedBox(height: kDefaultPadding),
       ],
     );
