@@ -78,11 +78,60 @@ flutter:
     - assets/
     - assets/icons/
     - assets/images/
-    - assets/images/ashwagandha/
-    - assets/images/tulsi/
-    - assets/images/aloe_vera/
-    - assets/images/neem/
-    - assets/images/brahmi/
+    - assets/images/ahala/
+    - assets/images/amukkara/
+    - assets/images/aralu/
+    - assets/images/aratta/
+    - assets/images/asamodakan/
+    - assets/images/attikka/
+    - assets/images/bakuchi/
+    - assets/images/bavila/
+    - assets/images/beli/
+    - assets/images/bulu/
+    - assets/images/daruharidra/
+    - assets/images//delum/
+    - assets/images/dhatura/
+    - assets/images/elabatu/
+    - assets/images/gammiris/
+    - assets/images/gokatu/
+    - assets/images/heen_midi/
+    - assets/images/inguru/
+    - assets/images/kaha/
+    - assets/images/kaladuru/
+    - assets/images/karabunati/
+    - assets/images/karalhaba/
+    - assets/images/katukarosana/
+    - assets/images/katuvalbatu/
+    - assets/images/kottamalli/
+    - assets/images/lunuvila/
+    - assets/images/malitha/
+    - assets/images/mee/
+    - assets/images/midi/
+    - assets/images/nagakeshara/
+    - assets/images/nelli/
+    - assets/images/nelum/
+    - assets/images/nika/
+    - assets/images/palol/
+    - assets/images/perumkayam/
+    - assets/images/rasakinda/
+    - assets/images/rathhadun/
+    - assets/images/rathmal/
+    - assets/images/rathnito/
+    - assets/images/sadikka/
+    - assets/images/savandara/
+    - assets/images/siviya/
+    - assets/images/suduhadun/
+    #- assets/images/thippili
+    - assets/images/tirastavalu/
+    - assets/images/valmee/
+    - assets/images/valmadata/
+    - assets/images/valangasal/
+    - assets/images/vadakaha/
+    - assets/images/uluhal/
+  
+
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

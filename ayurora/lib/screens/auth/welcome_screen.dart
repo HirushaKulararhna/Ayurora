@@ -28,55 +28,68 @@ class WelcomeScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo
+                // 🌿 App Logo
                 Container(
-                  width: 120,
-                  height: 120,
+                  width: 160,
+                  height: 160,
                   decoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.1),
+                    color: Colors.white,
                     shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: kPrimaryColor.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                  child: Icon(
-                    Icons.local_florist,
-                    size: 70,
-                    color: kPrimaryColor,
+                  padding: const EdgeInsets.all(18),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(80),
+                    child: Image.asset(
+                      'assets/playstore.png',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 30),
-                
-                // Title
+
+                const SizedBox(height: 35),
+
+                // 🌼 Title
                 Text(
                   'Welcome to',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 22,
                     color: kTextColor.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'AYURORA',
                   style: TextStyle(
-                    fontSize: 42,
+                    fontSize: 40,
                     fontWeight: FontWeight.bold,
                     color: kPrimaryColor,
                     letterSpacing: 2,
                   ),
                 ),
-                const SizedBox(height: 16),
-                
-                // Subtitle
+                const SizedBox(height: 18),
+
+                // 🌱 Subtitle
                 Text(
                   'Discover the healing power of Ayurvedic plants',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade600,
-                    height: 1.5,
+                    height: 1.6,
                   ),
                   textAlign: TextAlign.center,
                 ),
+
                 const SizedBox(height: 60),
-                
-                // Login Button
+
+                // 🔐 Login Button
                 SizedBox(
                   width: double.infinity,
                   height: 56,
@@ -92,7 +105,7 @@ class WelcomeScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: kPrimaryColor,
                       foregroundColor: Colors.white,
-                      elevation: 5,
+                      elevation: 6,
                       shadowColor: kPrimaryColor.withOpacity(0.4),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -108,9 +121,10 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
-                
-                // Signup Button
+
+                // 🪴 Signup Button
                 SizedBox(
                   width: double.infinity,
                   height: 56,
@@ -140,9 +154,10 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 40),
-                
-                // Footer
+
+                // 🌸 Footer
                 Text(
                   'Natural • Organic • Healing',
                   style: TextStyle(
