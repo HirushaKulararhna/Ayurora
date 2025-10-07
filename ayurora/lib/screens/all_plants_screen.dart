@@ -108,9 +108,9 @@ class _AllPlantsScreenState extends State<AllPlantsScreen> {
 
   double _getChildAspectRatio(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width >= 900) return 0.85;
-    if (width >= 600) return 0.8;
-    return 0.75;
+    if (width >= 900) return 0.75;
+    if (width >= 600) return 0.7;
+    return 0.68;
   }
 
   double _getResponsivePadding(BuildContext context) {
@@ -165,9 +165,11 @@ class PlantGridCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image section - takes 60% of card height
             Expanded(
-              flex: 3,
+              flex: 6,
               child: Container(
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: plant.backgroundColor.withOpacity(0.1),
                   borderRadius: BorderRadius.only(
@@ -177,23 +179,31 @@ class PlantGridCard extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    Center(
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(isSmallScreen ? 12 : 16),
+                        topRight: Radius.circular(isSmallScreen ? 12 : 16),
+                      ),
                       child: Hero(
                         tag: 'plant_${plant.id}',
                         child: Image.asset(
                           plant.imageUrl,
-                          height: _getImageHeight(context),
+                          width: double.infinity,
+                          height: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.local_florist,
-                              size: _getImageHeight(context) * 0.6,
-                              color: plant.backgroundColor,
+                            return Center(
+                              child: Icon(
+                                Icons.local_florist,
+                                size: 60,
+                                color: plant.backgroundColor,
+                              ),
                             );
                           },
                         ),
                       ),
                     ),
+                    // Favorite badge
                     if (plant.isFavorite)
                       Positioned(
                         top: isSmallScreen ? 6 : 8,
@@ -222,55 +232,77 @@ class PlantGridCard extends StatelessWidget {
                 ),
               ),
             ),
+            // Info section - takes 40% of card height
             Expanded(
-              flex: 2,
+              flex: 4,
               child: Padding(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      plant.name.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: _getResponsiveFontSize(context, 14),
-                        fontWeight: FontWeight.bold,
-                        color: kTextColor,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      plant.category.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: _getResponsiveFontSize(context, 10),
-                        color: plant.backgroundColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Spacer(),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSmallScreen ? 6 : 8,
-                        vertical: isSmallScreen ? 3 : 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: kPrimaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
-                      ),
-                      child: Text(
-                        plant.difficultyLevel,
-                        style: TextStyle(
-                          fontSize: _getResponsiveFontSize(context, 10),
-                          color: kPrimaryColor,
-                          fontWeight: FontWeight.w600,
+                    // Plant name and category
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          plant.name,
+                          style: TextStyle(
+                            fontSize: _getResponsiveFontSize(context, 14),
+                            fontWeight: FontWeight.bold,
+                            color: kTextColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                        SizedBox(height: 4),
+                        Text(
+                          plant.scientificName,
+                          style: TextStyle(
+                            fontSize: _getResponsiveFontSize(context, 10),
+                            color: Colors.grey.shade600,
+                            fontStyle: FontStyle.italic,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                    // Difficulty badge and price
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isSmallScreen ? 6 : 8,
+                            vertical: isSmallScreen ? 3 : 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: kPrimaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                size: isSmallScreen ? 10 : 12,
+                                color: kPrimaryColor,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                plant.difficultyLevel,
+                                style: TextStyle(
+                                  fontSize: _getResponsiveFontSize(context, 10),
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                       
+                      ],
                     ),
                   ],
                 ),
@@ -280,14 +312,6 @@ class PlantGridCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  double _getImageHeight(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width >= 900) return 120;
-    if (width >= 600) return 100;
-    if (width < 360) return 80;
-    return 100;
   }
 
   double _getResponsiveFontSize(BuildContext context, double baseSize) {

@@ -109,10 +109,13 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.all(20),
-                  child: Image.asset(
-                    'assets/playstore.png',
-                    fit: BoxFit.contain,
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/playstore.png',
+                      fit: BoxFit.cover,
+                      width: 140,
+                      height: 140,
+                    ),
                   ),
                 ),
               ),
