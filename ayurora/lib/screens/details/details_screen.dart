@@ -244,6 +244,29 @@ class _DetailsScreenState extends State<DetailsScreen>
                 ),
               ),
             ),
+            // Image indicator
+            Positioned(
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  widget.plant.galleryImages.length,
+                  (index) => Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    width: isSmallScreen ? 6 : 8,
+                    height: isSmallScreen ? 6 : 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _currentImageIndex == index 
+                          ? Colors.white 
+                          : Colors.white.withOpacity(0.5),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -274,19 +297,83 @@ class _DetailsScreenState extends State<DetailsScreen>
             SizedBox(height: padding * 1.75),
             _buildDescription(context),
             SizedBox(height: padding * 1.75),
+            
+            // Ayurvedic Properties
             _buildAyurvedicProperties(context),
             SizedBox(height: padding * 1.75),
-            _buildCareInstructions(context),
-            SizedBox(height: padding * 1.75),
-            _buildPlantBenefits(context),
-            SizedBox(height: padding * 1.75),
-            _buildTherapeuticUses(context),
-            SizedBox(height: padding * 1.75),
-            _buildFormulations(context),
-            SizedBox(height: padding * 1.75),
-            _buildDosageInfo(context),
-            SizedBox(height: padding * 1.75),
-            _buildPlantFacts(context),
+            
+            // Used Parts
+            if (widget.plant.usedParts.isNotEmpty) ...[
+              _buildUsedParts(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Care Instructions
+            if (widget.plant.careInstructions.isNotEmpty) ...[
+              _buildCareInstructions(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Plant Benefits
+            if (widget.plant.benefits.isNotEmpty) ...[
+              _buildPlantBenefits(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Therapeutic Uses
+            if (widget.plant.therapeuticUses.isNotEmpty) ...[
+              _buildTherapeuticUses(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Modern Therapeutics
+            if (widget.plant.modernTherapeutics.isNotEmpty) ...[
+              _buildModernTherapeutics(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Important Formulations
+            if (widget.plant.importantFormulations.isNotEmpty) ...[
+              _buildFormulations(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Dosage Information
+            if (widget.plant.dose.isNotEmpty) ...[
+              _buildDosageInfo(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Macroscopic Description
+            if (widget.plant.macroscopicDescription.isNotEmpty) ...[
+              _buildMacroscopicDescription(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Microscopic Description
+            if (widget.plant.microscopicDescription.isNotEmpty) ...[
+              _buildMicroscopicDescription(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Constituents
+            if (widget.plant.constituents.isNotEmpty) ...[
+              _buildConstituents(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Guna Shloka
+            if (widget.plant.gunaShloka.isNotEmpty) ...[
+              _buildGunaShloka(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
+            // Interesting Facts
+            if (widget.plant.interestingFacts.isNotEmpty) ...[
+              _buildPlantFacts(context),
+              SizedBox(height: padding * 1.75),
+            ],
+            
             const SizedBox(height: 100),
           ],
         ),
@@ -344,6 +431,16 @@ class _DetailsScreenState extends State<DetailsScreen>
             color: Colors.grey.shade600,
           ),
         ),
+        if (widget.plant.synonyms.isNotEmpty) ...[
+          SizedBox(height: 8),
+          Text(
+            'Synonyms: ${widget.plant.synonyms.join(', ')}',
+            style: TextStyle(
+              fontSize: _getResponsiveFontSize(context, 14),
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ],
         SizedBox(height: isSmallScreen ? 10 : 12),
         Wrap(
           spacing: isSmallScreen ? 12 : 16,
@@ -385,6 +482,25 @@ class _DetailsScreenState extends State<DetailsScreen>
                   ),
                 ),
               ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+             /* children: [
+                Icon(
+                  Icons.attach_money,
+                  color: Colors.green.shade600,
+                  size: isSmallScreen ? 14 : 16,
+                ),
+                SizedBox(width: isSmallScreen ? 3 : 4),
+                Text(
+                  'LKR ${widget.plant.price}',
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 14),
+                    color: Colors.green.shade600,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],*/
             ),
           ],
         ),
@@ -614,6 +730,43 @@ class _DetailsScreenState extends State<DetailsScreen>
     );
   }
 
+  Widget _buildUsedParts(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Used Parts',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: widget.plant.usedParts.map((part) => Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.purple.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.purple.withOpacity(0.3)),
+            ),
+            child: Text(
+              part,
+              style: TextStyle(
+                fontSize: _getResponsiveFontSize(context, 13),
+                color: Colors.purple.shade700,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCareInstructions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -740,7 +893,7 @@ class _DetailsScreenState extends State<DetailsScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Therapeutic Uses',
+          'Traditional Therapeutic Uses',
           style: TextStyle(
             fontSize: _getResponsiveFontSize(context, 20),
             fontWeight: FontWeight.bold,
@@ -759,6 +912,51 @@ class _DetailsScreenState extends State<DetailsScreen>
                 height: 6,
                 decoration: BoxDecoration(
                   color: kPrimaryColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  use,
+                  style: TextStyle(
+                    fontSize: _getResponsiveFontSize(context, 14),
+                    color: Colors.grey.shade700,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )).toList(),
+      ],
+    );
+  }
+
+  Widget _buildModernTherapeutics(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Modern Therapeutics',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        ...widget.plant.modernTherapeutics.map((use) => Padding(
+          padding: EdgeInsets.only(bottom: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 6),
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -859,6 +1057,149 @@ class _DetailsScreenState extends State<DetailsScreen>
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMacroscopicDescription(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Macroscopic Description',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        Container(
+          padding: EdgeInsets.all(_getResponsivePadding(context)),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Text(
+            widget.plant.macroscopicDescription,
+            style: TextStyle(
+              fontSize: _getResponsiveFontSize(context, 14),
+              color: Colors.grey.shade700,
+              height: 1.5,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMicroscopicDescription(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Microscopic Description',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        Container(
+          padding: EdgeInsets.all(_getResponsivePadding(context)),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Text(
+            widget.plant.microscopicDescription,
+            style: TextStyle(
+              fontSize: _getResponsiveFontSize(context, 14),
+              color: Colors.grey.shade700,
+              height: 1.5,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConstituents(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Chemical Constituents',
+          style: TextStyle(
+            fontSize: _getResponsiveFontSize(context, 20),
+            fontWeight: FontWeight.bold,
+            color: kTextColor,
+          ),
+        ),
+        SizedBox(height: _getResponsivePadding(context)),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: widget.plant.constituents.map((constituent) => Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.green.withOpacity(0.3)),
+            ),
+            child: Text(
+              constituent,
+              style: TextStyle(
+                fontSize: _getResponsiveFontSize(context, 13),
+                color: Colors.green.shade700,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGunaShloka(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(_getResponsivePadding(context)),
+      decoration: BoxDecoration(
+        color: Colors.brown.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.brown.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.book, color: Colors.brown.shade700, size: 24),
+              SizedBox(width: 12),
+              Text(
+                'Guna Shloka',
+                style: TextStyle(
+                  fontSize: _getResponsiveFontSize(context, 18),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown.shade800,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          Text(
+            widget.plant.gunaShloka,
+            style: TextStyle(
+              fontSize: _getResponsiveFontSize(context, 14),
+              color: Colors.brown.shade700,
+              fontStyle: FontStyle.italic,
+              height: 1.6,
             ),
           ),
         ],

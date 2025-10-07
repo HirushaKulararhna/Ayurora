@@ -163,60 +163,68 @@ class FavoritePlantListCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: _getImageContainerSize(context),
-              height: _getImageContainerSize(context),
-              decoration: BoxDecoration(
-                color: plant.backgroundColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(
-                  isSmallScreen ? 16 : 20,
-                ),
+            // Image Container - Fixed size with proper image fitting
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(isSmallScreen ? 16 : 20),
+                bottomLeft: Radius.circular(isSmallScreen ? 16 : 20),
               ),
-              child: Stack(
-                children: [
-                  Center(
-                    child: Hero(
+              child: Container(
+                width: _getImageContainerSize(context),
+                height: _getImageContainerSize(context),
+                decoration: BoxDecoration(
+                  color: plant.backgroundColor.withOpacity(0.1),
+                ),
+                child: Stack(
+                  children: [
+                    // Plant image fills the entire container
+                    Hero(
                       tag: 'plant_${plant.id}',
                       child: Image.asset(
                         plant.imageUrl,
-                        height: _getImageSize(context),
+                        width: double.infinity,
+                        height: double.infinity,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.local_florist,
-                            size: _getImageSize(context) * 0.6,
-                            color: plant.backgroundColor,
+                          return Center(
+                            child: Icon(
+                              Icons.local_florist,
+                              size: 50,
+                              color: plant.backgroundColor,
+                            ),
                           );
                         },
                       ),
                     ),
-                  ),
-                  Positioned(
-                    top: isSmallScreen ? 6 : 8,
-                    right: isSmallScreen ? 6 : 8,
-                    child: Container(
-                      padding: EdgeInsets.all(isSmallScreen ? 4 : 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                        size: isSmallScreen ? 12 : 16,
+                    // Favorite badge overlay
+                    Positioned(
+                      top: isSmallScreen ? 6 : 8,
+                      right: isSmallScreen ? 6 : 8,
+                      child: Container(
+                        padding: EdgeInsets.all(isSmallScreen ? 4 : 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: isSmallScreen ? 12 : 16,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
+            // Info Section
             Expanded(
               child: Padding(
                 padding: EdgeInsets.all(
@@ -226,8 +234,9 @@ class FavoritePlantListCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Plant name
                     Text(
-                      plant.name.toUpperCase(),
+                      plant.name,
                       style: TextStyle(
                         fontSize: _getResponsiveFontSize(context, 16),
                         fontWeight: FontWeight.bold,
@@ -237,6 +246,7 @@ class FavoritePlantListCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 4),
+                    // Scientific name
                     Text(
                       plant.scientificName,
                       style: TextStyle(
@@ -247,48 +257,65 @@ class FavoritePlantListCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: isSmallScreen ? 6 : 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
+                    SizedBox(height: isSmallScreen ? 8 : 10),
+                    // Tags row
+                    Row(
                       children: [
+                        // Category badge
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: isSmallScreen ? 6 : 8,
-                            vertical: isSmallScreen ? 3 : 4,
+                            horizontal: isSmallScreen ? 8 : 10,
+                            vertical: isSmallScreen ? 4 : 5,
                           ),
                           decoration: BoxDecoration(
-                            color: plant.backgroundColor.withOpacity(0.2),
+                            color: plant.backgroundColor.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(
-                              isSmallScreen ? 8 : 12,
+                              isSmallScreen ? 8 : 10,
                             ),
                           ),
                           child: Text(
                             plant.category,
                             style: TextStyle(
-                              fontSize: _getResponsiveFontSize(context, 10),
+                              fontSize: _getResponsiveFontSize(context, 11),
                               color: plant.backgroundColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.star,
-                              size: isSmallScreen ? 12 : 14,
-                              color: Colors.amber,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              plant.difficultyLevel,
-                              style: TextStyle(
-                                fontSize: _getResponsiveFontSize(context, 12),
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
+                        SizedBox(width: 8),
+                        // Difficulty level
+                        Icon(
+                          Icons.star,
+                          size: isSmallScreen ? 14 : 16,
+                          color: Colors.amber,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          plant.difficultyLevel,
+                          style: TextStyle(
+                            fontSize: _getResponsiveFontSize(context, 12),
+                            color: Colors.grey.shade700,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: isSmallScreen ? 6 : 8),
+                    // Growth time
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: isSmallScreen ? 14 : 16,
+                          color: Colors.grey.shade600,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          plant.growthTime,
+                          style: TextStyle(
+                            fontSize: _getResponsiveFontSize(context, 11),
+                            color: Colors.grey.shade600,
+                          ),
                         ),
                       ],
                     ),
@@ -296,6 +323,7 @@ class FavoritePlantListCard extends StatelessWidget {
                 ),
               ),
             ),
+            // Arrow icon
             Padding(
               padding: EdgeInsets.only(
                 right: isSmallScreen ? 12 : 16,
@@ -318,14 +346,6 @@ class FavoritePlantListCard extends StatelessWidget {
     if (width >= 600) return 130;
     if (width < 360) return 100;
     return 120;
-  }
-
-  double _getImageSize(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width >= 900) return 100;
-    if (width >= 600) return 90;
-    if (width < 360) return 70;
-    return 80;
   }
 
   double _getResponsiveMargin(BuildContext context) {

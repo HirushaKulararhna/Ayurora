@@ -1,9 +1,18 @@
-// Create: lib/screens/about_screen.dart
+// Updated: lib/screens/about_screen.dart
 import 'package:flutter/material.dart';
 import 'package:ayurora/constants.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
+
+  // Method to launch URLs
+  Future<void> _launchUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint('Could not launch $urlString');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +165,52 @@ class AboutScreen extends StatelessWidget {
           SizedBox(height: kDefaultPadding),
           _buildFeaturesList(context),
           SizedBox(height: kDefaultPadding * 2),
-          _buildOwnerSection(context),
+          
+          // Team Section Header
+          Text(
+            'Meet Our Team',
+            style: TextStyle(
+              fontSize: size.width < 360 ? 22.0 : 26.0,
+              fontWeight: FontWeight.bold,
+              color: kTextColor,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'The people behind Ayurora',
+            style: TextStyle(
+              fontSize: size.width < 360 ? 14.0 : 16.0,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          SizedBox(height: kDefaultPadding * 1.5),
+          
+          // First Team Member - Hirusha
+          _buildTeamMemberSection(
+            context,
+            name: 'Hirusha Kularathna',
+            role: 'Mobile App Developer',
+            image: 'assets/hirusha.png',
+            description: 'Computer Engineering Undergraduate | Faculty of Engineering | University of Ruhuna',
+            websiteUrl: 'https://yourwebsite.com', // Replace with actual URL
+            githubUrl: 'https://github.com/hirusha', // Replace with actual GitHub
+            linkedinUrl: 'https://linkedin.com/in/hirusha', // Replace with actual LinkedIn
+          ),
+          
+          SizedBox(height: kDefaultPadding * 1.5),
+          
+          // Second Team Member - Ruvindi (No GitHub)
+          _buildTeamMemberSection(
+            context,
+            name: 'Ruvindi Lochana Kularathna',
+            role: 'App Owner',
+            image: 'assets/ruvindi.png',
+            description: 'Faculty of Indigenous Medicine | University of Colombo',
+            websiteUrl: null, // No website
+            githubUrl: null, // No GitHub profile
+            linkedinUrl: 'https://linkedin.com/in/ruvindi', // Replace with actual LinkedIn if available
+          ),
+          
           SizedBox(height: kDefaultPadding * 2),
           _buildContactSection(context),
           SizedBox(height: kDefaultPadding * 2),
@@ -304,12 +358,27 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOwnerSection(BuildContext context) {
+  // Updated team member section with optional social links
+  Widget _buildTeamMemberSection(
+    BuildContext context, {
+    required String name,
+    required String role,
+    required String image,
+    required String description,
+    String? websiteUrl,
+    String? githubUrl,
+    String? linkedinUrl,
+  }) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 360;
     final avatarRadius = isSmallScreen ? 40.0 : 50.0;
     final nameSize = isSmallScreen ? 20.0 : 24.0;
     final roleSize = isSmallScreen ? 14.0 : 16.0;
+    
+    // Check if there are any social links
+    final hasSocialLinks = (websiteUrl != null && websiteUrl.isNotEmpty) ||
+                          (githubUrl != null && githubUrl.isNotEmpty) ||
+                          (linkedinUrl != null && linkedinUrl.isNotEmpty);
     
     return Container(
       padding: EdgeInsets.all(size.width * 0.04),
@@ -347,27 +416,14 @@ class AboutScreen extends StatelessWidget {
               ),
               child: CircleAvatar(
                 radius: avatarRadius,
-                backgroundColor: kPrimaryColor.withOpacity(0.1),
-                child: Icon(
-                  Icons.person,
-                  size: avatarRadius,
-                  color: kPrimaryColor,
-                ),
+                backgroundColor: Colors.transparent,
+                backgroundImage: AssetImage(image),
               ),
             ),
           ),
           SizedBox(height: 16),
           Text(
-            'Developed By',
-            style: TextStyle(
-              fontSize: isSmallScreen ? 12.0 : 14.0,
-              color: Colors.grey.shade600,
-              letterSpacing: 1.2,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Your Name',
+            name,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: nameSize,
@@ -377,7 +433,7 @@ class AboutScreen extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            'Mobile App Developer',
+            role,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: roleSize,
@@ -387,7 +443,7 @@ class AboutScreen extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Text(
-            'Passionate about creating beautiful and functional mobile applications that bring traditional knowledge to modern users.',
+            description,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: isSmallScreen ? 13.0 : 14.0,
@@ -395,26 +451,68 @@ class AboutScreen extends StatelessWidget {
               color: Colors.grey.shade700,
             ),
           ),
-          SizedBox(height: 20),
-          _buildSocialButtons(context),
+          if (hasSocialLinks) ...[
+            SizedBox(height: 20),
+            _buildSocialButtons(
+              context,
+              websiteUrl: websiteUrl,
+              githubUrl: githubUrl,
+              linkedinUrl: linkedinUrl,
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildSocialButtons(BuildContext context) {
+  Widget _buildSocialButtons(
+    BuildContext context, {
+    String? websiteUrl,
+    String? githubUrl,
+    String? linkedinUrl,
+  }) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 360;
     
+    List<Widget> buttons = [];
+    
+    if (websiteUrl != null && websiteUrl.isNotEmpty) {
+      buttons.add(_buildSocialButton(
+        Icons.language,
+        'Website',
+        isSmallScreen,
+        () => _launchUrl(websiteUrl),
+      ));
+    }
+    
+    if (githubUrl != null && githubUrl.isNotEmpty) {
+      buttons.add(_buildSocialButton(
+        Icons.code,
+        'GitHub',
+        isSmallScreen,
+        () => _launchUrl(githubUrl),
+      ));
+    }
+    
+    if (linkedinUrl != null && linkedinUrl.isNotEmpty) {
+      buttons.add(_buildSocialButton(
+        Icons.work,
+        'LinkedIn',
+        isSmallScreen,
+        () => _launchUrl(linkedinUrl),
+      ));
+    }
+    
+    if (buttons.isEmpty) {
+      return SizedBox.shrink();
+    }
+    
     if (isSmallScreen) {
       return Column(
-        children: [
-          _buildSocialButton(Icons.language, 'Website', isSmallScreen),
-          SizedBox(height: 8),
-          _buildSocialButton(Icons.code, 'GitHub', isSmallScreen),
-          SizedBox(height: 8),
-          _buildSocialButton(Icons.work, 'LinkedIn', isSmallScreen),
-        ],
+        children: buttons.map((button) => Padding(
+          padding: EdgeInsets.only(bottom: buttons.last == button ? 0 : 8),
+          child: button,
+        )).toList(),
       );
     }
     
@@ -422,41 +520,46 @@ class AboutScreen extends StatelessWidget {
       spacing: 12,
       runSpacing: 12,
       alignment: WrapAlignment.center,
-      children: [
-        _buildSocialButton(Icons.language, 'Website', isSmallScreen),
-        _buildSocialButton(Icons.code, 'GitHub', isSmallScreen),
-        _buildSocialButton(Icons.work, 'LinkedIn', isSmallScreen),
-      ],
+      children: buttons,
     );
   }
 
-  Widget _buildSocialButton(IconData icon, String label, bool isSmallScreen) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 12 : 16,
-        vertical: isSmallScreen ? 8 : 10,
-      ),
-      decoration: BoxDecoration(
-        color: kPrimaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: kPrimaryColor.withOpacity(0.3),
+  Widget _buildSocialButton(
+    IconData icon,
+    String label,
+    bool isSmallScreen,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 12 : 16,
+          vertical: isSmallScreen ? 8 : 10,
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: isSmallScreen ? 16 : 18, color: kPrimaryColor),
-          SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 12 : 13,
-              fontWeight: FontWeight.w600,
-              color: kPrimaryColor,
-            ),
+        decoration: BoxDecoration(
+          color: kPrimaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: kPrimaryColor.withOpacity(0.3),
           ),
-        ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: isSmallScreen ? 16 : 18, color: kPrimaryColor),
+            SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 12 : 13,
+                fontWeight: FontWeight.w600,
+                color: kPrimaryColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -467,56 +570,60 @@ class AboutScreen extends StatelessWidget {
     final iconSize = isSmallScreen ? 35.0 : 40.0;
     final titleSize = isSmallScreen ? 18.0 : 20.0;
     
-    return Container(
-      padding: EdgeInsets.all(size.width * 0.04),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            kPrimaryColor.withOpacity(0.1),
-            kPrimaryColor.withOpacity(0.05),
-          ],
+    return InkWell(
+      onTap: () => _launchUrl('mailto:contact@ayurora.com'),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: EdgeInsets.all(size.width * 0.04),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              kPrimaryColor.withOpacity(0.1),
+              kPrimaryColor.withOpacity(0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: kPrimaryColor.withOpacity(0.3)),
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kPrimaryColor.withOpacity(0.3)),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.mail_outline,
-            size: iconSize,
-            color: kPrimaryColor,
-          ),
-          SizedBox(height: 12),
-          Text(
-            'Get in Touch',
-            style: TextStyle(
-              fontSize: titleSize,
-              fontWeight: FontWeight.bold,
-              color: kTextColor,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Have questions or suggestions?',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 13.0 : 14.0,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          SizedBox(height: 16),
-          Text(
-            'contact@ayurora.com',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 14.0 : 16.0,
-              fontWeight: FontWeight.w600,
+        child: Column(
+          children: [
+            Icon(
+              Icons.mail_outline,
+              size: iconSize,
               color: kPrimaryColor,
             ),
-          ),
-        ],
+            SizedBox(height: 12),
+            Text(
+              'Get in Touch',
+              style: TextStyle(
+                fontSize: titleSize,
+                fontWeight: FontWeight.bold,
+                color: kTextColor,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Have questions or suggestions?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 13.0 : 14.0,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'contact@ayurora.com',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 14.0 : 16.0,
+                fontWeight: FontWeight.w600,
+                color: kPrimaryColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
